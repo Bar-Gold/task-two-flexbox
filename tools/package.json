@@ -1,0 +1,20 @@
+{
+  "name": "flex-dock-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Validation tooling for Flex Dock. Development only; the game itself has no dependencies.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "lint:html": "html-validate ../index.html",
+    "lint:css": "stylelint \"../css/*.css\"",
+    "zip": "node make-zip.mjs"
+  },
+  "devDependencies": {
+    "html-validate": "^9.5.3",
+    "node-html-parser": "^6.1.13",
+    "puppeteer-core": "^24.10.0",
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard": "^36.0.1"
+  }
+}
