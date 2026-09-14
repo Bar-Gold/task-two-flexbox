@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Flex Dock | משחק ללימוד Flexbox</title>
+  <meta name="description" content="Flex Dock: משחק קצר ללימוד Flexbox. עגנו את הספינות במקום הנכון בעזרת display, flex-direction, justify-content, align-items ו-flex-wrap.">
+  <meta name="author" content="בר גולדשטיין, בנימין ברודי">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Applies the saved theme before first paint, so there is no flash. -->
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#console">דילוג לחדר הבקרה</a>
+
+  <!-- Ship drawings, referenced with <use> from every ship on the board. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="icon-fighter" viewBox="0 0 48 48">
+      <path class="hull" d="M24 4c5.5 7 8 15 8 25v9H16v-9c0-10 2.5-18 8-25z"></path>
+      <path class="fin" d="M16 27l-8 11h8zM32 27l8 11h-8z"></path>
+      <path class="flame" d="M19 38h10l-5 8z"></path>
+      <circle class="glass" cx="24" cy="21" r="4"></circle>
+    </symbol>
+    <symbol id="icon-freighter" viewBox="0 0 80 64">
+      <rect class="flame" x="1" y="33" width="9" height="10" rx="2"></rect>
+      <rect class="hull" x="8" y="28" width="66" height="22" rx="7"></rect>
+      <rect class="fin" x="58" y="18" width="14" height="12" rx="3"></rect>
+      <rect class="cargo" x="12" y="16" width="12" height="12" rx="2"></rect>
+      <rect class="cargo" x="27" y="16" width="12" height="12" rx="2"></rect>
+      <rect class="cargo" x="42" y="16" width="12" height="12" rx="2"></rect>
+      <circle class="glass" cx="65" cy="24" r="2.5"></circle>
+    </symbol>
+  </svg>
+
+  <div class="page">
+
+    <header class="site-header">
+      <div class="brand">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <use href="#icon-fighter"></use>
+        </svg>
+        <div class="brand__text">
+          <h1 class="brand__title" dir="ltr">Flex Dock</h1>
+          <p class="brand__tagline">מפרץ העגינה. משחק קצר ללימוד Flexbox.</p>
+        </div>
+      </div>
+
+      <div class="status">
+        <p class="status__score" title="כוכבים שנצברו מתוך המקסימום">
+          <span class="status__star" aria-hidden="true">★</span>
+          <span class="visually-hidden">כוכבים: </span>
+          <span dir="ltr"><span id="score">0</span>/<span id="score-max">36</span></span>
+        </p>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="מעבר למצב בהיר">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="4.5"></circle>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="game" id="main">
+
+      <section class="mission" aria-labelledby="level-title">
+        <p class="mission__progress" id="level-indicator">שלב 1 מתוך 12</p>
+        <h2 class="mission__title" id="level-title">מפעילים את המנוע</h2>
+        <p class="mission__text" id="level-instruction"></p>
+        <div class="mission__hint" id="hint" hidden>
+          <p class="mission__hint-text" id="hint-text"></p>
+        </div>
+      </section>
+
+      <div class="play">
+
+        <section class="hangar" aria-labelledby="hangar-title">
+          <h2 class="visually-hidden" id="hangar-title">לוח המשחק</h2>
+          <!-- The board keeps a fixed 320x320px size on every screen, and is
+               always LTR so flex-start / row behave exactly as documented. -->
+          <div class="board" id="board" dir="ltr">
+            <ul class="board__pads" id="pads" aria-hidden="true"></ul>
+            <ul class="board__dock" id="dock" aria-label="הספינות במפרץ"></ul>
+          </div>
+          <div class="hangar__meta">
+            <p class="hangar__attempts">ניסיונות בשלב הזה: <span id="attempts" dir="ltr">0</span></p>
+            <p class="hangar__legend">
+              <span class="hangar__legend-pad" aria-hidden="true"></span>
+              רציף עגינה. הביאו כל ספינה אל הרציף עם המספר שלה.
+            </p>
+          </div>
+        </section>
+
+        <section class="console" id="console" aria-labelledby="console-title">
+          <h2 class="console__title" id="console-title">חדר הבקרה</h2>
+          <p class="console__lead">בחרו ערך לכל מאפיין. כל בחירה משנה את המפרץ מיד.</p>
+
+          <form class="controls" id="controls" novalidate>
+
+            <fieldset class="prop" data-prop="display">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">display</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-display"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="display" id="display-block" value="block">
+                <label class="prop__option" for="display-block">block</label>
+                <input class="prop__input" type="radio" name="display" id="display-flex" value="flex">
+                <label class="prop__option" for="display-flex">flex</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="prop" data-prop="flex-direction">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">flex-direction</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-flex-direction"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="flex-direction" id="fd-row" value="row">
+                <label class="prop__option" for="fd-row">row</label>
+                <input class="prop__input" type="radio" name="flex-direction" id="fd-row-reverse" value="row-reverse">
+                <label class="prop__option" for="fd-row-reverse">row-reverse</label>
+                <input class="prop__input" type="radio" name="flex-direction" id="fd-column" value="column">
+                <label class="prop__option" for="fd-column">column</label>
+                <input class="prop__input" type="radio" name="flex-direction" id="fd-column-reverse" value="column-reverse">
+                <label class="prop__option" for="fd-column-reverse">column-reverse</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="prop" data-prop="justify-content">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">justify-content</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-justify-content"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="justify-content" id="jc-flex-start" value="flex-start">
+                <label class="prop__option" for="jc-flex-start">flex-start</label>
+                <input class="prop__input" type="radio" name="justify-content" id="jc-flex-end" value="flex-end">
+                <label class="prop__option" for="jc-flex-end">flex-end</label>
+                <input class="prop__input" type="radio" name="justify-content" id="jc-center" value="center">
+                <label class="prop__option" for="jc-center">center</label>
+                <input class="prop__input" type="radio" name="justify-content" id="jc-space-between" value="space-between">
+                <label class="prop__option" for="jc-space-between">space-between</label>
+                <input class="prop__input" type="radio" name="justify-content" id="jc-space-around" value="space-around">
+                <label class="prop__option" for="jc-space-around">space-around</label>
+                <input class="prop__input" type="radio" name="justify-content" id="jc-space-evenly" value="space-evenly">
+                <label class="prop__option" for="jc-space-evenly">space-evenly</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="prop" data-prop="align-items">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">align-items</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-align-items"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="align-items" id="ai-stretch" value="stretch">
+                <label class="prop__option" for="ai-stretch">stretch</label>
+                <input class="prop__input" type="radio" name="align-items" id="ai-flex-start" value="flex-start">
+                <label class="prop__option" for="ai-flex-start">flex-start</label>
+                <input class="prop__input" type="radio" name="align-items" id="ai-flex-end" value="flex-end">
+                <label class="prop__option" for="ai-flex-end">flex-end</label>
+                <input class="prop__input" type="radio" name="align-items" id="ai-center" value="center">
+                <label class="prop__option" for="ai-center">center</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="prop" data-prop="flex-wrap">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">flex-wrap</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-flex-wrap"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="flex-wrap" id="fw-nowrap" value="nowrap">
+                <label class="prop__option" for="fw-nowrap">nowrap</label>
+                <input class="prop__input" type="radio" name="flex-wrap" id="fw-wrap" value="wrap">
+                <label class="prop__option" for="fw-wrap">wrap</label>
+                <input class="prop__input" type="radio" name="flex-wrap" id="fw-wrap-reverse" value="wrap-reverse">
+                <label class="prop__option" for="fw-wrap-reverse">wrap-reverse</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="prop" data-prop="align-content">
+              <legend class="prop__legend"><code class="prop__name" dir="ltr">align-content</code><span class="prop__badge" hidden>חדש</span></legend>
+              <p class="prop__desc" id="desc-align-content"></p>
+              <div class="prop__options" dir="ltr">
+                <input class="prop__input" type="radio" name="align-content" id="ac-stretch" value="stretch">
+                <label class="prop__option" for="ac-stretch">stretch</label>
+                <input class="prop__input" type="radio" name="align-content" id="ac-flex-start" value="flex-start">
+                <label class="prop__option" for="ac-flex-start">flex-start</label>
+                <input class="prop__input" type="radio" name="align-content" id="ac-flex-end" value="flex-end">
+                <label class="prop__option" for="ac-flex-end">flex-end</label>
+                <input class="prop__input" type="radio" name="align-content" id="ac-center" value="center">
+                <label class="prop__option" for="ac-center">center</label>
+                <input class="prop__input" type="radio" name="align-content" id="ac-space-between" value="space-between">
+                <label class="prop__option" for="ac-space-between">space-between</label>
+                <input class="prop__input" type="radio" name="align-content" id="ac-space-around" value="space-around">
+                <label class="prop__option" for="ac-space-around">space-around</label>
+              </div>
+            </fieldset>
+
+            <h3 class="visually-hidden">ה-CSS הנוכחי של המפרץ</h3>
+            <pre class="code" id="code" dir="ltr"><code id="code-body"></code></pre>
+
+            <div class="actions">
+              <button type="submit" class="btn btn--primary" id="check">בדיקת עגינה</button>
+              <button type="button" class="btn" id="reset">איפוס השלב</button>
+              <button type="button" class="btn btn--ghost" id="hint-toggle" aria-expanded="false" aria-controls="hint" hidden>רמז</button>
+            </div>
+          </form>
+
+          <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+
+          <div class="success" id="success" role="status" aria-live="polite" hidden>
+            <p class="success__title" id="success-title">כל הספינות עגנו!</p>
+            <p class="success__stars" id="success-stars"></p>
+            <p class="success__text" id="success-text"></p>
+            <button type="button" class="btn btn--primary" id="next">לשלב הבא</button>
+          </div>
+        </section>
+
+      </div>
+
+      <nav class="levels" aria-labelledby="levels-title">
+        <h2 class="levels__title" id="levels-title">מפת השלבים</h2>
+        <ol class="levels__list" id="level-map"></ol>
+      </nav>
+
+    </main>
+
+    <footer class="site-footer">
+      <p class="site-footer__credit">מטלה 2 בקורס פיתוח אתרים. את המשחק בנו בר גולדשטיין ובנימין ברודי.</p>
+      <p class="site-footer__note">ההתקדמות נשמרת בדפדפן הזה בלבד.</p>
+      <button type="button" class="btn btn--ghost btn--small" id="restart">מחיקת ההתקדמות</button>
+    </footer>
+
+  </div>
+
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
