@@ -1,0 +1,136 @@
+/* Design tokens.
+
+   Two themes: light is the default on :root, dark overrides it when the OS
+   asks for dark (and the player has not chosen light) or when the player
+   picked dark with the toggle (data-theme="dark" on <html>, set by js/theme.js
+   and js/game.js).
+
+   The board itself is not themed: it is a window into space, so it stays
+   dark in both modes and its colours live in the "board" block at the end. */
+
+:root {
+  /* type */
+  --font-sans: 'Rubik', 'Segoe UI', 'Helvetica Neue', arial, sans-serif;
+  --font-mono: 'JetBrains Mono', consolas, 'Courier New', monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --leading-tight: 1.2;
+  --leading-body: 1.6;
+
+  /* space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* shape */
+  --radius-sm: 0.5rem;
+  --radius: 0.875rem;
+  --radius-pill: 999px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --glide: 480ms;
+  --quick: 160ms;
+
+  /* light theme */
+  color-scheme: light;
+  --bg: #eef1f8;
+  --bg-elev: #fff;
+  --bg-inset: #f3f5fb;
+  --border: #d3d9e8;
+  --border-strong: #a9b3cc;
+  --fg: #141a2e;
+  --fg-muted: #4a5470;
+  --fg-subtle: #626c88;
+  --accent: #0b5fb0;
+  --accent-strong: #094b8c;
+  --accent-soft: #dbe9fa;
+  --on-accent: #fff;
+  --beam-text: #8a5a00;
+  --beam-soft: rgb(255 200 87 / 22%);
+  --success: #157347;
+  --success-soft: #dcf5e8;
+  --error: #b91c3c;
+  --error-soft: #fde4ea;
+  --ring: #0b5fb0;
+  --shadow: 0 1px 2px rgb(20 26 46 / 6%), 0 10px 28px rgb(20 26 46 / 8%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a0f1e;
+    --bg-elev: #131a2e;
+    --bg-inset: #0d1325;
+    --border: #26304d;
+    --border-strong: #3b4870;
+    --fg: #e8ecfb;
+    --fg-muted: #aab4d2;
+    --fg-subtle: #8a95b8;
+    --accent: #7cc7ff;
+    --accent-strong: #a6dbff;
+    --accent-soft: rgb(124 199 255 / 16%);
+    --on-accent: #0a0f1e;
+    --beam-text: #ffc857;
+    --beam-soft: rgb(255 200 87 / 16%);
+    --success: #5be3a0;
+    --success-soft: rgb(91 227 160 / 14%);
+    --error: #ff7a90;
+    --error-soft: rgb(255 122 144 / 14%);
+    --ring: #ffc857;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 35%);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0f1e;
+  --bg-elev: #131a2e;
+  --bg-inset: #0d1325;
+  --border: #26304d;
+  --border-strong: #3b4870;
+  --fg: #e8ecfb;
+  --fg-muted: #aab4d2;
+  --fg-subtle: #8a95b8;
+  --accent: #7cc7ff;
+  --accent-strong: #a6dbff;
+  --accent-soft: rgb(124 199 255 / 16%);
+  --on-accent: #0a0f1e;
+  --beam-text: #ffc857;
+  --beam-soft: rgb(255 200 87 / 16%);
+  --success: #5be3a0;
+  --success-soft: rgb(91 227 160 / 14%);
+  --error: #ff7a90;
+  --error-soft: rgb(255 122 144 / 14%);
+  --ring: #ffc857;
+  --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 35%);
+}
+
+/* board: the same in both themes */
+/* stylelint-disable-next-line no-duplicate-selectors */
+:root {
+  --board-bg: #070b18;
+  --board-border: #2a3860;
+  --board-star: rgb(232 236 251 / 55%);
+  --board-success: #5be3a0;
+  --pad: #ffc857;
+  --pad-line: rgb(255 200 87 / 60%);
+  --pad-fill: rgb(255 200 87 / 7%);
+  --pad-text: rgb(255 200 87 / 80%);
+  --ship-bg: #17264a;
+  --ship-border: #4a7fc0;
+  --ship-hull: #7cc7ff;
+  --ship-fin: #3f8fd6;
+  --ship-glass: #eaf7ff;
+  --ship-flame: #ffc857;
+  --ship-cargo: #ffd98a;
+  --ship-text: #e8ecfb;
+}
