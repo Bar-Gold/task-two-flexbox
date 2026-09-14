@@ -1,0 +1,17 @@
+# Development tooling dependencies (tools/ holds the test suite; the game itself has none)
+node_modules/
+
+# Build artefacts
+*.zip
+
+# Local notes for Claude Code, not part of the submission
+CLAUDE.md
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
