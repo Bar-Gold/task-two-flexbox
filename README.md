@@ -90,5 +90,5 @@ npm run zip       # בונה flex-dock-submission.zip עם קבצי המשחק �
 
 ## גופנים
 
-Rubik ו-JetBrains Mono, שניהם ברישיון SIL Open Font License 1.1.
+גופני Rubik ו-JetBrains Mono, שניהם ברישיון SIL Open Font License 1.1.
 הרישיונות ב-`assets/fonts/`.
